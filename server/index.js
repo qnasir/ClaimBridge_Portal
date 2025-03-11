@@ -4,10 +4,19 @@ const cors = require("cors")
 const connectDB = require("./config/db.js")
 
 const app = express();
-const PORT = process.env.PORT || 7000;
-app.use(cors())
 
+// Connect to Database
 connectDB();
+
+// Middleware
+app.use(cors())
+app.use(express.json({extended: false}));
+
+// Routes
+app.use('/api/auth', require('./routes/auth.js'));
+app.use('/api/claims', require('./routes/claims.js'))
+
+const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
     console.log(`App is running on port ${PORT}`)
 })
