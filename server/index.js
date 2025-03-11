@@ -13,8 +13,8 @@ app.use(cors())
 app.use(express.json({extended: false}));
 
 // Routes
-app.use('/api/auth', require('./routes/auth.js'));
-app.use('/api/claims', require('./routes/claims.js'))
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/claims', require('./routes/claims'))
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {

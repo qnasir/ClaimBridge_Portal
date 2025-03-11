@@ -4,7 +4,7 @@ const {
   getClaim,
   createClaim,
   updateClaim
-} = require('../controllers/claimsController');
+} = require('../controllers/claimController');
 
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
