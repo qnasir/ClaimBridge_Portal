@@ -29,7 +29,7 @@ The **ClaimBridge_Portal** is a web application designed to streamline the proce
   - Store claims data including ID, Name, Email, Claim Amount, Description, Status, Submission Date, and Insurer Comments
 
 ## Tech Stack
-- **Frontend:** React.js
+- **Frontend:** React.js (Typescript)
 - **Backend:** NestJS (Node.js & Express.js Framework)
 - **Database:** MongoDB
 
