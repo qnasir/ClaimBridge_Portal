@@ -3,14 +3,25 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { UserCircle, LogOut, Menu, X } from "lucide-react";
-
+import { getCurrentUser, clearCurrentUser } from '@/lib/mockData';
+import { User } from '@/lib/types';
 
 export function Header() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    setUser(currentUser);
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    clearCurrentUser();
+    setUser(null);
+    navigate('/login');
+  };
 
   const getDashboardUrl = () => {
     if (!user) return '/login';
@@ -21,7 +32,6 @@ export function Header() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Close mobile menu when changing location
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
@@ -38,7 +48,6 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {user ? (
             <>
@@ -64,6 +73,7 @@ export function Header() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
+                  onClick={handleLogout}
                   className="gap-1"
                 >
                   <LogOut className="h-4 w-4" />
@@ -80,7 +90,6 @@ export function Header() {
           )}
         </nav>
 
-        {/* Mobile Menu Button */}
         <button 
           className="md:hidden flex items-center justify-center"
           onClick={toggleMobileMenu}
@@ -94,7 +103,6 @@ export function Header() {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-background border-b animate-fade-in">
           <div className="container py-4 space-y-4">
@@ -121,6 +129,7 @@ export function Header() {
                 <Button 
                   variant="outline" 
                   size="sm" 
+                  onClick={handleLogout}
                   className="w-full justify-start gap-2"
                 >
                   <LogOut className="h-4 w-4" />
