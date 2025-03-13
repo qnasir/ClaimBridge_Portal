@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
               <Route path='/' element={<Index />} />
               <Route path='/login' element={<Login />} />
             </Routes>
+            <Route path="*" element={<NotFound />} />
           </main>
         </div>
       </BrowserRouter>
