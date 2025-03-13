@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from 'lucide-react';
-// import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/components/FileUpload';
 import { Document } from '@/lib/types';
 import { addClaim, getCurrentUser } from '@/lib/mockData';
 import { useToast } from "@/hooks/use-toast";
@@ -167,10 +167,10 @@ const SubmitClaim = () => {
                     <FormItem>
                       <FormLabel>Supporting Documents</FormLabel>
                       <FormControl>
-                        {/* <FileUpload
+                        <FileUpload
                           onFilesSelected={handleDocumentsChange}
                           existingDocuments={documents}
-                        /> */}
+                        />
                       </FormControl>
                       <FormDescription>
                         Upload receipts, prescriptions, or other relevant documents
