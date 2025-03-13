@@ -32,7 +32,7 @@ import { Claim, ClaimStatus } from '@/lib/types';
 import { getClaims, updateClaim, getCurrentUser } from '@/lib/mockData';
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
-// import { StatusBadge } from '@/components/StatusBadge';
+import { StatusBadge } from '@/components/StatusBadge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 
@@ -198,7 +198,7 @@ const ReviewClaim = () => {
                     Review claim information
                   </CardDescription>
                 </div>
-                {/* <StatusBadge status={claim.status} /> */}
+                <StatusBadge status={claim.status} />
               </div>
             </CardHeader>
             
