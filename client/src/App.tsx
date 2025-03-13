@@ -59,7 +59,7 @@ const App = () => (
                 <ProtectedRoute allowedRole="patient"><SubmitClaim /></ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />
-              <Route path="/insurer/review/submit" element={
+              <Route path="/insurer/review/:claimId" element={
                 <ProtectedRoute allowedRole="insurer"><ReviewClaim /></ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />
