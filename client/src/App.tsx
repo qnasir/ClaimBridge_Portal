@@ -10,6 +10,7 @@ import SubmitClaim from "./pages/patient/SubmitClaim";
 import { useEffect, useState } from "react";
 import { User } from "./lib/types";
 import { getCurrentUser } from "./lib/mockData";
+import ReviewClaim from "./pages/insurer/ReviewClaim";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,10 @@ const App = () => (
               <Route path='/login' element={<Login />} />
               <Route path="/patient/submit" element={
                 <ProtectedRoute allowedRole="patient"><SubmitClaim /></ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+              <Route path="/insurer/review/submit" element={
+                <ProtectedRoute allowedRole="insurer"><ReviewClaim /></ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
