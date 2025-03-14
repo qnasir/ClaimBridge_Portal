@@ -27,15 +27,16 @@ exports.getClaims = async (req, res) => {
 // Get Claim
 exports.getClaim = async (req, res) => {
   try {
-    const claim = await Claim.findById(req.params.id);
-    if (!claim) {
+    const claims = await Claim.find({ patientId: req.params.id });
+
+    if (!claims.length) {
       return res.status(404).json({
         success: false,
-        message: `Claim not found with id of ${req.params.id}`,
+        message: `No claims found for patient ID ${req.params.id}`,
       });
     }
 
-    if (req.user.role === "patient" && claim.patientId !== req.user.id) {
+    if (req.user.role === "patient" && claims[0].patientId !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to access this claim`,
@@ -44,7 +45,7 @@ exports.getClaim = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: claim,
+      data: claims,
     });
   } catch (err) {
     return res.status(400).json({
