@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ import FileUpload from '@/components/FileUpload';
 import { Document } from '@/lib/types';
 import { addClaim, getCurrentUser } from '@/lib/mockData';
 import { useToast } from "@/hooks/use-toast";
+import axios from 'axios';
 
 const submitClaimSchema = z.object({
   amount: z.preprocess(
@@ -42,45 +43,53 @@ const SubmitClaim = () => {
   const form = useForm<SubmitClaimFormValues>({
     resolver: zodResolver(submitClaimSchema),
     defaultValues: {
-      amount: undefined,
+      amount: 0,
       description: "",
       documents: [],
     },
   });
   
-  const onSubmit = (data: SubmitClaimFormValues) => {
-    const currentUser = getCurrentUser();
-    
-    if (!currentUser) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to submit a claim",
-        variant: "destructive",
+  const onSubmit = async (data: SubmitClaimFormValues) => {
+    try {
+      const token = localStorage.getItem("token");
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+  
+      if (!currentUser) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to submit a claim",
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+  
+      // Create claim data with image URLs
+      const newClaim = {
+        amount: data.amount,
+        description: data.description,
+        documents: documents.map((doc) => doc.url), // Sending only URLs to backend
+      };
+  
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/claims`, newClaim, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
       });
-      navigate('/login');
-      return;
+  
+      console.log("Response", response);
+      toast({
+        title: "Claim submitted successfully!",
+        description: "Your claim has been submitted and is pending review.",
+      });
+      navigate("/patient/dashboard");
+    } catch (error) {
+      console.log("Error", error);
     }
-    
-    // Create a new claim
-    const newClaim = addClaim({
-      patientId: currentUser.id,
-      patientName: currentUser.name,
-      patientEmail: currentUser.email,
-      amount: data.amount,
-      description: data.description,
-      status: 'pending',
-      documents,
-    });
-    
-    // Show success toast
-    toast({
-      title: "Claim submitted successfully!",
-      description: "Your claim has been submitted and is pending review.",
-    });
-    
-    // Navigate back to the dashboard
-    navigate('/patient/dashboard');
   };
+  
   
   const handleDocumentsChange = (newDocuments: Document[]) => {
     setDocuments(newDocuments);
