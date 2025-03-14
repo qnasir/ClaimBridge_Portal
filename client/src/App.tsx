@@ -14,9 +14,15 @@ import ReviewClaim from "./pages/insurer/ReviewClaim";
 import NotFound from "./pages/NotFound";
 import { getCurrentUser } from "./lib/mockData";
 import { useEffect, useState } from "react";
-import { User } from "./lib/types";
 
 const queryClient = new QueryClient();
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
 // Protected route component
 const ProtectedRoute = ({ 
@@ -30,8 +36,8 @@ const ProtectedRoute = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
+    const currentUser = localStorage.getItem("user");
+    setUser(JSON.parse(currentUser));
     setLoading(false);
   }, []);
 

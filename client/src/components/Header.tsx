@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { UserCircle, LogOut, Menu, X } from "lucide-react";
-import { getCurrentUser, clearCurrentUser } from '@/lib/mockData';
 import { User } from '@/lib/types';
+import { observer } from 'mobx-react-lite';
+import { userStore } from '@/store/userStore';
 
 export function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,12 +14,13 @@ export function Header() {
   const location = useLocation();
   
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
+    const currentUser = localStorage.getItem("user");
+    setUser(JSON.parse(currentUser));
   }, [location.pathname]);
 
   const handleLogout = () => {
-    clearCurrentUser();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     navigate('/login');
   };
