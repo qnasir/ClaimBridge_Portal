@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
 import ClaimCard from '@/components/ClaimCard';
 import { Claim, ClaimStatus } from '@/lib/types';
-import { getClaims, getCurrentUser } from '@/lib/mockData';
+import axios from 'axios';
 
 const PatientDashboard = () => {
   const [claims, setClaims] = useState<Claim[]>([]);
@@ -19,12 +19,29 @@ const PatientDashboard = () => {
   
   // Load claims
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user) return;
-    
-    const allClaims = getClaims().filter(claim => claim.patientId === user.id);
-    setClaims(allClaims);
-    setFilteredClaims(allClaims);
+    const fetchClaims = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const token = localStorage.getItem("token");
+        if (!user || !user.id) return;
+        const userId = user.id;
+        
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/claims/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        });
+
+        const allClaims = response.data.data;
+        setClaims(allClaims);
+        setFilteredClaims(allClaims);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchClaims();
   }, []);
   
   // Filter claims when tab or search changes
