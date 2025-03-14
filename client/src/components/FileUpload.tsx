@@ -14,29 +14,45 @@ export function FileUpload({ onFilesSelected, existingDocuments = [], className 
   const [documents, setDocuments] = useState<Document[]>(existingDocuments);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    
+  
+    const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
     const newDocuments: Document[] = [];
-    
-    Array.from(e.target.files).forEach(file => {
-      // Create a document object for each file
-      const document: Document = {
-        id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: file.name,
-        type: file.type,
-        url: URL.createObjectURL(file),
-        uploadDate: new Date().toISOString()
-      };
-      
-      newDocuments.push(document);
+  
+    const uploadPromises = Array.from(e.target.files).map(async (file) => {
+      const formData = new FormData();
+      formData.append("image", file);
+  
+      try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+          method: "POST",
+          body: formData,
+        });
+  
+        if (!response.ok) throw new Error("Upload failed");
+  
+        const result = await response.json();
+        return {
+          id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: file.name,
+          type: file.type,
+          url: result.data.url, // Image URL from imgbb
+          uploadDate: new Date().toISOString(),
+        };
+      } catch (error) {
+        console.error("Upload error:", error);
+        return null;
+      }
     });
-    
-    // Update state and call the callback
-    const updatedDocuments = [...documents, ...newDocuments];
+  
+    const uploadedDocs = (await Promise.all(uploadPromises)).filter((doc) => doc !== null) as Document[];
+  
+    const updatedDocuments = [...documents, ...uploadedDocs];
     setDocuments(updatedDocuments);
     onFilesSelected(updatedDocuments);
   };
+  
 
   const handleRemoveDocument = (id: string) => {
     const updatedDocuments = documents.filter(doc => doc.id !== id);

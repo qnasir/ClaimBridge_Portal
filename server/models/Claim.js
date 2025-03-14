@@ -1,55 +1,50 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ClaimSchema = new mongoose.Schema({
   patientId: {
     type: String,
-    required: true
+    required: true,
   },
   patientName: {
     type: String,
-    required: true
+    required: true,
   },
   patientEmail: {
     type: String,
-    required: true
+    required: true,
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
   },
   submissionDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   approvedAmount: {
-    type: Number
+    type: Number,
   },
   reviewedBy: {
-    type: String
+    type: String,
   },
   comments: {
-    type: String
+    type: String,
   },
   documents: [
     {
-      name: String,
-      url: String,
       type: String,
-      uploadDate: {
-        type: Date,
-        default: Date.now
-      }
-    }
-  ]
+      required: true,
+    },
+  ],
 });
 
-module.exports = mongoose.model('Claim', ClaimSchema);
+module.exports = mongoose.model("Claim", ClaimSchema);

@@ -9,7 +9,12 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors())
+app.use(cors({
+    origin: ['https://chatappfrontend-xi.vercel.app','http://localhost:8081'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: 'GET, POST, PUT, DELETE',
+  }));
 app.use(express.json({extended: false}));
 
 // Routes
