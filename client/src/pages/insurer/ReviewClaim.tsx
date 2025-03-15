@@ -28,32 +28,34 @@ import {
   CheckCircle, 
   XCircle 
 } from 'lucide-react';
-import { Claim, ClaimStatus } from '@/lib/types';
-import { getClaims, updateClaim, getCurrentUser } from '@/lib/mockData';
+import { Claim } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 import { StatusBadge } from '@/components/StatusBadge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
+import { observer } from 'mobx-react-lite';
+import axios from 'axios';
 
 const reviewSchema = z.object({
   status: z.enum(['approved', 'rejected']),
   approvedAmount: z.preprocess(
-    (a) => (a === '' ? undefined : parseFloat(z.string().parse(a))),
+    (a) => (typeof a === "string" && a.trim() === "" ? undefined : Number(a)),
     z.number().positive().optional()
   ),
   comments: z.string().min(1, { message: "Comments are required" }),
 });
 
+
 type ReviewFormValues = z.infer<typeof reviewSchema>;
 
-const ReviewClaim = () => {
+const ReviewClaim = observer (() => {
   const [claim, setClaim] = useState<Claim | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { claimId } = useParams();
-  const { toast } = useToast();
-  
+  const { toast } = useToast();  
+
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
@@ -62,39 +64,52 @@ const ReviewClaim = () => {
       comments: '',
     },
   });
-  
-  // Load claim data
+
   useEffect(() => {
-    if (!claimId) return;
-    
-    const allClaims = getClaims();
-    const foundClaim = allClaims.find(c => c.id === claimId);
-    
-    if (foundClaim) {
-      setClaim(foundClaim);
-      
-      // Pre-fill form if claim was already reviewed
-      if (foundClaim.status !== 'pending') {
-        form.setValue('status', foundClaim.status as 'approved' | 'rejected');
-        if (foundClaim.approvedAmount) {
-          form.setValue('approvedAmount', foundClaim.approvedAmount);
+    const fetchClaims = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/claims`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        })
+        const allClaims = response.data.data;
+        const foundClaim = allClaims.find((c: { _id: string; }) => c._id === claimId);
+        if (foundClaim) {
+          setClaim(foundClaim);
+          // Pre-fill form if claim was already reviewed
+          if (foundClaim.status !== 'pending') {
+            form.setValue('status', foundClaim.status as 'approved' | 'rejected');
+            if (foundClaim.approvedAmount) {
+              form.setValue('approvedAmount', foundClaim.approvedAmount);
+            }
+            if (foundClaim.comments) {
+              form.setValue('comments', foundClaim.comments);
+            }
+          } else {
+            // For new reviews, default approved amount to the claimed amount
+            form.setValue('approvedAmount', foundClaim.amount);
+          }
         }
-        if (foundClaim.comments) {
-          form.setValue('comments', foundClaim.comments);
-        }
-      } else {
-        // For new reviews, default approved amount to the claimed amount
-        form.setValue('approvedAmount', foundClaim.amount);
+        
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
       }
     }
-    
-    setLoading(false);
+    fetchClaims();
   }, [claimId, form]);
   
-  const onSubmit = (data: ReviewFormValues) => {
+  
+  const onSubmit = async (data: ReviewFormValues) => {
+    try {
+
     if (!claim) return;
     
-    const currentUser = getCurrentUser();
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     if (!currentUser) {
       toast({
         title: "Error",
@@ -106,22 +121,36 @@ const ReviewClaim = () => {
     }
     
     // Update claim
-    const updatedClaim: Claim = {
+    const token = localStorage.getItem("token");
+
+    const updatedClaim = {
       ...claim,
       status: data.status,
       approvedAmount: data.status === 'approved' ? (data.approvedAmount || claim.amount) : undefined,
       comments: data.comments,
       reviewedBy: currentUser.id,
-    };
+    }
+
+    const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/claims/${claimId}`, updatedClaim, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    const newClaim = response.data;
     
-    updateClaim(updatedClaim);
-    setClaim(updatedClaim);
+    setClaim(newClaim);
     
-    // Show success toast
     toast({
       title: `Claim ${data.status}`,
       description: `Claim has been ${data.status} successfully.`,
     });
+    navigate('/insurer/dashboard');
+  } catch (err) {
+    console.log(err);
+  }
   };
   
   const goBack = () => {
@@ -135,8 +164,11 @@ const ReviewClaim = () => {
     }).format(amount);
   };
   
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'PPP');
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date"; 
+    return format(date, "PPP");
   };
   
   if (loading) {
@@ -275,12 +307,12 @@ const ReviewClaim = () => {
                   Supporting Documents
                 </h3>
                 
-                {claim.documents.length > 0 ? (
+                {claim?.documents && claim.documents.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {claim.documents.map((doc) => (
+                    {claim.documents.map((doc, id) => (
                       <a 
-                        key={doc.id}
-                        href={doc.url}
+                        key={id}
+                        href={doc}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block border rounded-lg overflow-hidden hover:border-primary transition-colors group"
@@ -289,8 +321,8 @@ const ReviewClaim = () => {
                           <FileText className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
                         <div className="p-3">
-                          <p className="font-medium text-sm truncate">{doc.name}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{formatDate(doc.uploadDate)}</p>
+                          <p className="font-medium text-sm truncate">{`Document ${id + 1}`}</p>
+                          {/* <p className="text-xs text-muted-foreground mt-1">{formatDate(doc.uploadDate)}</p> */}
                         </div>
                       </a>
                     ))}
@@ -406,6 +438,6 @@ const ReviewClaim = () => {
       </div>
     </div>
   );
-};
+});
 
 export default ReviewClaim;

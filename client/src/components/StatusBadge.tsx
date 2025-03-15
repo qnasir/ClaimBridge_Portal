@@ -32,6 +32,13 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
           className: 'bg-red-50 text-red-700 border-red-200',
           iconClassName: 'text-status-rejected',
         };
+        default:
+          return {
+            label: 'Unknown',
+            icon: Clock,
+            className: 'bg-gray-50 text-gray-700 border-gray-200',
+            iconClassName: 'text-gray-400',
+          }
     }
   };
 

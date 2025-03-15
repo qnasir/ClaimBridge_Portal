@@ -20,7 +20,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowLeft } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import { Document } from '@/lib/types';
-import { addClaim, getCurrentUser } from '@/lib/mockData';
 import { useToast } from "@/hooks/use-toast";
 import axios from 'axios';
 
