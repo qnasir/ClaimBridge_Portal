@@ -10,7 +10,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: ['https://chatappfrontend-xi.vercel.app','http://localhost:8081'],
+    origin: ['https://claimbridgeportal.vercel.app','http://localhost:8081'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     methods: 'GET, POST, PUT, DELETE',
