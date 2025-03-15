@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     chunkSizeWarningLimit: 500, // Ensures chunks are below 500KB
     rollupOptions: {
+      external: ["zod"],
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
