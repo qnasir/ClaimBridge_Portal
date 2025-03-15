@@ -19,7 +19,10 @@ app.use(express.json({extended: false}));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/claims', require('./routes/claims'))
+app.use('/api/claims', require('./routes/claims'));
+app.get('/', (req,res) => {
+  res.send("Express is saying Hello!");
+})
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
