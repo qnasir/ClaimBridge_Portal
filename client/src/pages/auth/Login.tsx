@@ -97,7 +97,7 @@ const Login = observer(() => {
 
   const onLoginSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}api/auth/login`, {
         email: data.email,
         password: data.password,
         role,
@@ -123,7 +123,7 @@ const Login = observer(() => {
 
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/register`, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}api/auth/register`, {
         name: data.name,
         email: data.email,
         password: data.password,

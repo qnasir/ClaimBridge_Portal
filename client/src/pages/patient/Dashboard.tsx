@@ -26,7 +26,7 @@ const PatientDashboard = () => {
         if (!user || !user.id) return;
         const userId = user.id;
         
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/claims/${userId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}api/claims/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

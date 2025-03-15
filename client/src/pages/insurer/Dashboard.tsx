@@ -39,7 +39,7 @@ const InsurerDashboard = () => {
     const fetchClaims = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/claims`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}api/claims`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

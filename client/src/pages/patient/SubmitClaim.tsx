@@ -70,7 +70,7 @@ const SubmitClaim = () => {
         documents: documents.map((doc) => doc.url), // Sending only URLs to backend
       };
   
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/claims`, newClaim, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}api/claims`, newClaim, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
