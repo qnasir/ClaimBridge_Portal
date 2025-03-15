@@ -1,4 +1,4 @@
-const Claim = require("../models/Claim");
+const Claim = require("../models/Claim.js");
 
 // Get Claims
 exports.getClaims = async (req, res) => {
