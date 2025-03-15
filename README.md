@@ -13,7 +13,7 @@ Deployment link :- [https://claimbridgeportal.vercel.app/](https://claimbridgepo
   - Upload supporting documents (e.g., receipts, prescriptions)
 - **View Claims:**
   - Dashboard to track claim status: Pending, Approved, Rejected
-  - Displays submission date and approved amount (if applicable)
+  - Displays submission date and approved amount.
 
 ### Insurer Side
 - **Claims Dashboard:**
