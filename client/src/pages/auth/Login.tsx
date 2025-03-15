@@ -53,11 +53,12 @@ const registerSchema = z
     path: ["confirmPassword"],
   });
 
-  type RegisterFormValues = z.infer<typeof registerSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const Login = observer(() => {
   const [activeTab, setActiveTab] = useState("login");
-  const [role, setRole] = useState<'patient' | 'insurer'>('patient');
+  const [role, setRole] = useState<"patient" | "insurer">("patient");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -72,7 +73,8 @@ const Login = observer(() => {
       return;
     }
     const role = userStore.user.role;
-    const redirectPath = role === "patient" ? "/patient/dashboard" : "/insurer/dashboard";
+    const redirectPath =
+      role === "patient" ? "/patient/dashboard" : "/insurer/dashboard";
     navigate(redirectPath);
   }, [navigate]);
 
@@ -91,17 +93,20 @@ const Login = observer(() => {
       email: "",
       password: "",
       confirmPassword: "",
-    }
-
-  })
+    },
+  });
 
   const onLoginSubmit = async (data: LoginFormValues) => {
+    setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}api/auth/login`, {
-        email: data.email,
-        password: data.password,
-        role,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}api/auth/login`,
+        {
+          email: data.email,
+          password: data.password,
+          role,
+        }
+      );
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       userStore.setUser(response.data.user);
@@ -109,7 +114,8 @@ const Login = observer(() => {
         title: "Login Successful",
         description: `Welcome back, ${response.data.user.name}`,
       });
-      const redirectPath = role === 'patient' ? '/patient/dashboard' : '/insurer/dashboard';
+      const redirectPath =
+        role === "patient" ? "/patient/dashboard" : "/insurer/dashboard";
       navigate(redirectPath);
     } catch (error) {
       toast({
@@ -118,17 +124,23 @@ const Login = observer(() => {
           error.response?.data?.message || "Invalid email or password.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const onRegisterSubmit = async (data: RegisterFormValues) => {
+    setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}api/auth/register`, {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        role: role,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}api/auth/register`,
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: role,
+        }
+      );
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -137,7 +149,8 @@ const Login = observer(() => {
         title: "Registration successful!",
         description: `Welcome, ${response.data.user.name}!`,
       });
-      const redirectPath = role === 'patient' ? '/patient/dashboard' : '/insurer/dashboard';
+      const redirectPath =
+        role === "patient" ? "/patient/dashboard" : "/insurer/dashboard";
       navigate(redirectPath);
     } catch (error) {
       toast({
@@ -145,8 +158,10 @@ const Login = observer(() => {
         description: error.response?.data?.message || "An error occurred.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const handleRoleChange = (value: string) => {
     setRole(value as UserRole);
@@ -253,7 +268,11 @@ const Login = observer(() => {
                     />
 
                     <Button type="submit" className="w-full">
-                      Sign in
+                      {loading ? (
+                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      ) : (
+                        "Sign In"
+                      )}
                     </Button>
                   </form>
                 </Form>
@@ -338,7 +357,11 @@ const Login = observer(() => {
                     />
 
                     <Button type="submit" className="w-full">
-                      Create Account
+                      {loading ? (
+                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      ) : (
+                        "Create Account"
+                      )}
                     </Button>
                   </form>
                 </Form>
