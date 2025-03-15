@@ -10,7 +10,7 @@ export type User = {
 export type ClaimStatus = 'pending' | 'approved' | 'rejected';
 
 export type Claim = {
-    id:string;
+    _id:string;
     patientId: string;
     patientName: string;
     patientEmail: string;
@@ -21,7 +21,7 @@ export type Claim = {
     approvedAmount?: number;
     reviewedBy?: string;
     comments?: string;
-    documents: Document[];
+    documents: string[];
 };
 
 export type Document = {

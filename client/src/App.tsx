@@ -12,7 +12,6 @@ import SubmitClaim from "./pages/patient/SubmitClaim";
 import InsurerDashboard from "./pages/insurer/Dashboard";
 import ReviewClaim from "./pages/insurer/ReviewClaim";
 import NotFound from "./pages/NotFound";
-import { getCurrentUser } from "./lib/mockData";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();

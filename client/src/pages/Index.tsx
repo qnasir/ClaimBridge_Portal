@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { getCurrentUser } from '@/lib/mockData';
 import { User } from '@/lib/types';
 
 const Index = () => {
@@ -11,7 +10,7 @@ const Index = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    const currentUser = getCurrentUser();
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     setUser(currentUser);
   }, []);
 

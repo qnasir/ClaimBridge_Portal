@@ -15,10 +15,11 @@ import {
 import { Button } from '@/components/ui/button';
 import ClaimCard from '@/components/ClaimCard';
 import { Claim, ClaimStatus } from '@/lib/types';
-import { getClaims } from '@/lib/mockData';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import axios from 'axios';
+import claimsStore from '@/store/claimStore';
 
 type SortField = 'date' | 'amount';
 type SortDirection = 'asc' | 'desc';
@@ -35,9 +36,25 @@ const InsurerDashboard = () => {
   
   // Load claims
   useEffect(() => {
-    const allClaims = getClaims();
-    setClaims(allClaims);
-    setFilteredClaims(allClaims);
+    const fetchClaims = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/claims`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        })
+        const allClaims = response.data.data;
+        setClaims(allClaims);
+        setFilteredClaims(allClaims);
+        claimsStore.setClaims(allClaims);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchClaims();
   }, []);
   
   // Filter and sort claims
@@ -100,7 +117,7 @@ const InsurerDashboard = () => {
   };
   
   const handleReviewClaim = (claim: Claim) => {
-    navigate(`/insurer/review/${claim.id}`);
+    navigate(`/insurer/review/${claim._id}`);
   };
 
   const resetFilters = () => {
@@ -253,9 +270,9 @@ const InsurerDashboard = () => {
             <TabsContent value={activeTab}>
               {filteredClaims.length > 0 ? (
                 <div className="grid gap-4">
-                  {filteredClaims.map((claim) => (
+                  {filteredClaims.map((claim, id) => (
                     <ClaimCard 
-                      key={claim.id} 
+                      key={id} 
                       claim={claim} 
                       onClick={() => handleReviewClaim(claim)}
                     />

@@ -165,9 +165,9 @@ const PatientDashboard = () => {
             <TabsContent value={activeTab}>
               {filteredClaims.length > 0 ? (
                 <div className="grid gap-4">
-                  {filteredClaims.map((claim) => (
+                  {filteredClaims.map((claim, id) => (
                     <ClaimCard 
-                      key={claim.id} 
+                      key={id} 
                       claim={claim} 
                     />
                   ))}

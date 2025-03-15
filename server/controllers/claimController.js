@@ -96,7 +96,7 @@ exports.updateClaim = async (req, res) => {
             });
         }
         if (req.user.role === 'insurer' && req.body.status) {
-            req.body.reviewBy = req.user.id;
+            req.body.reviewedBy = req.user.id;
         }
 
         claim = await Claim.findByIdAndUpdate(req.params.id, req.body, {
@@ -104,7 +104,7 @@ exports.updateClaim = async (req, res) => {
             runValidators: true
         });
 
-        return res.staus(200).json({
+        return res.status(200).json({
             success: true,
             data: claim
         });
