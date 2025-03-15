@@ -460,7 +460,7 @@ const ReviewClaim = observer(() => {
                 />
 
                 <Button type="submit" className="w-full">
-                  {setIsLoading ? (
+                  {isLoading ? (
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                   ) : (
                     "Submit Review"
