@@ -44,22 +44,22 @@ Ensure you have the following installed:
 
 ### Clone Repository
 ```sh
-git clone https://github.com/your-repo/minimal-claims-platform.git
-cd minimal-claims-platform
+git clone https://github.com/qnasir/ClaimBridge_Portal.git
+cd ClaimBridge_Portal
 ```
 
 ### Backend Setup
 ```sh
-cd backend
+cd server
 npm install
-npm run start:dev
+modemon index.js
 ```
 
 ### Frontend Setup
 ```sh
-cd frontend
+cd client
 npm install
-npm start
+npm run dev
 ```
 
 ## License
