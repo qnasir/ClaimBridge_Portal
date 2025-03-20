@@ -32,7 +32,7 @@ Deployment link :- [https://claimbridgeportal.vercel.app/](https://claimbridgepo
 
 ## Tech Stack
 - **Frontend:** React.js (Typescript)
-- **Backend:** NestJS (Node.js & Express.js Framework)
+- **Backend:** Node.js & Express.js Framework
 - **Database:** MongoDB
 
 ## Installation & Setup
